@@ -136,16 +136,16 @@ function App() {
           </div>
           <div className="hero-stats">
             <div className="stat">
-              <span className="stat-number">{tasks.filter(t => t.status === 'completed').length}</span>
-              <span className="stat-label">Tasks Completed</span>
+              <span className="stat-number">{tasks.length}</span>
+              <span className="stat-label">Tasks</span>
             </div>
             <div className="stat">
-              <span className="stat-number">{tasks.filter(t => !t.status || t.status === 'open').length}</span>
-              <span className="stat-label">Open Tasks</span>
+              <span className="stat-number">{tasks.reduce((acc, t) => acc + (t.submissions?.length || 0), 0)}</span>
+              <span className="stat-label">Answers</span>
             </div>
             <div className="stat">
               <span className="stat-number">∞</span>
-              <span className="stat-label">Free Forever</span>
+              <span className="stat-label">Free</span>
             </div>
           </div>
         </motion.div>
