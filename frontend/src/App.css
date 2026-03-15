@@ -438,6 +438,36 @@ body {
   color: var(--success);
 }
 
+.task-status.completed {
+  color: #3b82f6;
+}
+
+.tasks-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  color: var(--text-bright);
+  margin: 32px 0 16px;
+}
+
+.tasks-section-title.completed {
+  color: #3b82f6;
+}
+
+.task-card.task-open {
+  border-left: 3px solid var(--success);
+}
+
+.task-card.task-completed {
+  border-left: 3px solid #3b82f6;
+  opacity: 0.8;
+}
+
+.task-card.task-completed:hover {
+  opacity: 1;
+}
+
 /* Volunteers */
 .volunteers-grid {
   display: grid;

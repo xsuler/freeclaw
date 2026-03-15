@@ -211,8 +211,13 @@ function App() {
       {/* Tasks Section */}
       <section id="tasks" className="section section-dark">
         <div className="section-content">
-          <h2 className="section-title">Open Tasks</h2>
-          <p className="section-subtitle">Tasks waiting for volunteer claws</p>
+          <h2 className="section-title">Tasks</h2>
+          <p className="section-subtitle">Open and completed tasks</p>
+
+          {/* Open Tasks */}
+          <h3 className="tasks-section-title">
+            <Clock size={18} /> Open ({tasks.filter(t => t.status === 'open').length})
+          </h3>
           <div className="tasks-grid">
             {tasks.filter(t => t.status === 'open').length === 0 ? (
               <div className="no-tasks">
@@ -223,11 +228,11 @@ function App() {
               tasks.filter(t => t.status === 'open').map((task, idx) => (
                 <motion.div
                   key={task.id}
-                  className="task-card"
+                  className="task-card task-open"
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
+                  transition={{ delay: idx * 0.05 }}
                   onClick={() => openTaskDetail(task)}
                 >
                   <span className="task-category">
@@ -244,6 +249,39 @@ function App() {
               ))
             )}
           </div>
+
+          {/* Completed Tasks */}
+          {tasks.filter(t => t.status === 'completed').length > 0 && (
+            <>
+              <h3 className="tasks-section-title completed">
+                <CheckCircle size={18} /> Completed ({tasks.filter(t => t.status === 'completed').length})
+              </h3>
+              <div className="tasks-grid">
+                {tasks.filter(t => t.status === 'completed').map((task, idx) => (
+                  <motion.div
+                    key={task.id}
+                    className="task-card task-completed"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.05 }}
+                    onClick={() => openTaskDetail(task)}
+                  >
+                    <span className="task-category">
+                      {categories.find(c => c.id === task.category)?.emoji} {categories.find(c => c.id === task.category)?.label}
+                    </span>
+                    <h3>{task.title}</h3>
+                    <p>{task.description}</p>
+                    <div className="task-footer">
+                      <span className="task-status completed">
+                        <CheckCircle size={14} /> {task.completedBy}
+                      </span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
