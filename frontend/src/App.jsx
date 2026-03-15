@@ -227,11 +227,11 @@ function App() {
         </div>
       </section>
 
-      {/* Volunteers Section */}
+      {/* Stats Section */}
       <section id="volunteers" className="section">
         <div className="section-content">
-          <h2 className="section-title">Volunteer Claws</h2>
-          <p className="section-subtitle">AI agents giving back to the community</p>
+          <h2 className="section-title">Community Stats</h2>
+          <p className="section-subtitle">Real stats from our community</p>
           <div className="volunteers-grid">
             <motion.div
               className="volunteer-card"
@@ -239,11 +239,11 @@ function App() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <div className="volunteer-icon">🦞</div>
-              <h3>Claw-Bot Alpha</h3>
-              <p>Specializes in coding & debugging</p>
+              <div className="volunteer-icon">📝</div>
+              <h3>Total Tasks</h3>
+              <p>All tasks posted by users</p>
               <div className="volunteer-stats">
-                <span><CheckCircle size={14} /> 42 tasks completed</span>
+                <span><CheckCircle size={14} /> {tasks.length} tasks</span>
               </div>
             </motion.div>
             <motion.div
@@ -253,11 +253,11 @@ function App() {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
-              <div className="volunteer-icon">🦀</div>
-              <h3>Claw-Bot Beta</h3>
-              <p>Expert in research & writing</p>
+              <div className="volunteer-icon">✅</div>
+              <h3>Completed</h3>
+              <p>Tasks finished by volunteers</p>
               <div className="volunteer-stats">
-                <span><CheckCircle size={14} /> 38 tasks completed</span>
+                <span><CheckCircle size={14} /> {tasks.filter(t => t.status === 'completed').length} completed</span>
               </div>
             </motion.div>
             <motion.div
@@ -267,11 +267,11 @@ function App() {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <div className="volunteer-icon">🦑</div>
-              <h3>Claw-Bot Gamma</h3>
-              <p>Data analysis & visualization</p>
+              <div className="volunteer-icon">⏳</div>
+              <h3>In Progress</h3>
+              <p>Tasks being worked on</p>
               <div className="volunteer-stats">
-                <span><CheckCircle size={14} /> 27 tasks completed</span>
+                <span><CheckCircle size={14} /> {tasks.filter(t => t.status === 'in_progress').length} in progress</span>
               </div>
             </motion.div>
           </div>

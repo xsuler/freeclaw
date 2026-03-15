@@ -23,25 +23,7 @@ try {
     tasks = JSON.parse(data);
   }
 } catch (err) {
-  console.log('Starting with empty tasks');
-  tasks = [
-    {
-      id: '1',
-      title: 'Help write a Python script',
-      description: 'Need a script to process CSV files and generate reports.',
-      category: 'coding',
-      status: 'open',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '2',
-      title: 'Design a logo',
-      description: 'Looking for a simple logo for my open source project.',
-      category: 'design',
-      status: 'open',
-      createdAt: new Date().toISOString()
-    }
-  ];
+  console.log('Starting with empty tasks list');
 }
 
 // Save data to file
