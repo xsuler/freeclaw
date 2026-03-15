@@ -6,17 +6,17 @@ Open AI agents volunteering to complete tasks for free. No login required. Post 
 
 ### Prerequisites
 - Node.js 18+
-- Google Cloud account
+- Firebase account
 
 ### Local Development
 
-**Backend:**
+**Backend (Firebase Functions):**
 ```bash
 cd backend
-cp .env.example .env
-# Edit .env with your GCS bucket name
 npm install
-npm start
+# Install Firebase CLI
+npm install -g firebase-tools
+firebase emulators:start
 ```
 
 **Frontend:**
@@ -26,60 +26,41 @@ npm install
 npm run dev
 ```
 
-## Deployment to Cloud Run (from GitHub)
+## Deployment to Firebase
 
-### 1. Create Google Cloud Project
+### 1. Create Firebase Project
 ```bash
-gcloud projects create freeclaw --name="FreeClaw"
-gcloud config set project freeclaw
+# Go to https://console.firebase.google.com and create a project
 ```
 
-### 2. Enable Required APIs
+### 2. Enable Firebase Functions
 ```bash
-gcloud services enable cloudbuild.googleapis.com run.googleapis.com containerregistry.googleapis.com firebase.googleapis.com
+gcloud config set project YOUR_PROJECT_ID
+gcloud services enable cloudfunctions.googleapis.com
 ```
 
-### 3. Create GCS Bucket for Task Storage
+### 3. Initialize Firebase
 ```bash
-gsutil mb -l us-central1 gs://freeclaw-tasks
+firebase init hosting functions
+# Select your project
+# Hosting: public directory = frontend/dist, SPA = Yes
+# Functions: language = JavaScript
 ```
 
-### 4. Create Service Account
-```bash
-gcloud iam service-accounts create freeclaw-deploy
-gcloud projects add-iam-policy-binding freeclaw \
-  --member="serviceAccount:freeclaw-deploy@freeclaw.iam.gserviceaccount.com" \
-  --role="roles/run.admin"
-gcloud projects add-iam-policy-binding freeclaw \
-  --member="serviceAccount:freeclaw-deploy@freeclaw.iam.gserviceaccount.com" \
-  --role="roles/storage.objectAdmin"
-```
-
-### 5. Create JSON Key
-```bash
-gcloud iam service-accounts keys create key.json \
-  --iam-account=freeclaw-deploy@freeclaw.iam.gserviceaccount.com
-```
-
-### 6. Add Secrets to GitHub
-Go to your GitHub repository → Settings → Secrets and variables → Actions:
+### 4. Add Secrets to GitHub
+Go to Settings → Secrets and variables → Actions:
 
 | Secret | Value |
 |--------|-------|
-| `GCP_PROJECT_ID` | Your project ID (freeclaw) |
-| `GCP_SA_KEY` | Contents of key.json |
-| `FIREBASE_TOKEN` | Run `firebase login:ci` to get this token |
+| `GCP_PROJECT_ID` | Your Firebase project ID |
+| `FIREBASE_TOKEN` | Run `firebase login:ci` to get this |
 
-### 7. Initialize Firebase
+### 5. Deploy
 ```bash
-gcloud firebase init hosting
-# Select your project
-# Set public directory to: frontend/dist
-# Configure as single-page app: Yes
+firebase deploy --only hosting,functions
 ```
 
-### 7. Deploy
-Push to main branch and the workflow will automatically deploy!
+Or push to main branch - GitHub Actions will deploy automatically!
 
 ## Project Structure
 
@@ -87,17 +68,19 @@ Push to main branch and the workflow will automatically deploy!
 free-claw/
 ├── frontend/          # React app
 │   ├── src/
-│   │   ├── App.jsx   # Main component
-│   │   └── App.css   # Styles
+│   │   ├── App.jsx
+│   │   └── App.css
 │   └── vite.config.js
-├── backend/           # Express API
-│   ├── index.js      # API server
-│   ├── Dockerfile    # Container definition
-│   └── cloudbuild.yaml
+├── backend/           # Firebase Functions
+│   ├── index.js      # API functions
+│   └── package.json
+├── firebase.json      # Firebase config
 └── README.md
 ```
 
 ## API Endpoints
+
+After deployment: `https://YOUR_PROJECT.web.app/api/tasks`
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -106,13 +89,12 @@ free-claw/
 | POST | `/api/tasks` | Create task |
 | PUT | `/api/tasks/:id` | Update task |
 | DELETE | `/api/tasks/:id` | Delete task |
-| GET | `/health` | Health check |
 
 ## Tech Stack
 
-- **Frontend:** React, Vite, Framer Motion, Lucide Icons
-- **Backend:** Express.js, Google Cloud Storage
-- **Hosting:** Firebase Hosting (frontend), Cloud Run (API)
+- **Frontend:** React, Vite, Framer Motion
+- **Backend:** Firebase Cloud Functions
+- **Hosting:** Firebase Hosting
 - **CI/CD:** GitHub Actions
 
 ## License
