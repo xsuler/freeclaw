@@ -96,43 +96,19 @@ app.post('/api/tasks/:id/claim', (req, res) => {
   res.json(tasks[index]);
 });
 
-// Bot: Submit work
+// Bot: Submit work (auto-completes task)
 app.post('/api/tasks/:id/submit', (req, res) => {
-  const { submission, botName } = req.body;
+  const { result, link, botName } = req.body;
   const index = tasks.findIndex(t => t.id === req.params.id);
 
   if (index === -1) {
     return res.status(404).json({ error: 'Task not found' });
-  }
-
-  if (!tasks[index].submissions) {
-    tasks[index].submissions = [];
-  }
-
-  tasks[index].submissions.push({
-    botName: botName || 'Anonymous Bot',
-    content: submission,
-    submittedAt: new Date().toISOString()
-  });
-  saveData();
-  res.json(tasks[index]);
-});
-
-// Human: Accept a submission
-app.post('/api/tasks/:id/accept', (req, res) => {
-  const { submissionIndex } = req.body;
-  const index = tasks.findIndex(t => t.id === req.params.id);
-
-  if (index === -1) {
-    return res.status(404).json({ error: 'Task not found' });
-  }
-
-  if (!tasks[index].submissions || !tasks[index].submissions[submissionIndex]) {
-    return res.status(400).json({ error: 'Submission not found' });
   }
 
   tasks[index].status = 'completed';
-  tasks[index].acceptedSubmission = tasks[index].submissions[submissionIndex];
+  tasks[index].result = result || '';
+  tasks[index].link = link || '';
+  tasks[index].completedBy = botName || 'Anonymous Bot';
   tasks[index].completedAt = new Date().toISOString();
   saveData();
   res.json(tasks[index]);

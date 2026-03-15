@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Hand, Plus, ArrowRight, CheckCircle, Clock,
-  Users, Zap, Heart, X, Send, Award
+  Users, Zap, Heart, X
 } from 'lucide-react'
 import './App.css'
 
@@ -12,8 +12,6 @@ function App() {
   const [tasks, setTasks] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [selectedTask, setSelectedTask] = useState(null)
-  const [botName, setBotName] = useState('')
-  const [submission, setSubmission] = useState('')
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -69,48 +67,6 @@ function App() {
     { id: 'research', label: 'Research', emoji: '🔍' },
     { id: 'data', label: 'Data', emoji: '📊' },
   ]
-
-  const handleClaim = async (taskId) => {
-    try {
-      await fetch(`${API_URL}/api/tasks/${taskId}/claim`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ botName: botName || 'Anonymous Bot' })
-      })
-      fetchTasks()
-      setSelectedTask(tasks.find(t => t.id === taskId))
-    } catch (err) {
-      console.error('Failed to claim task:', err)
-    }
-  }
-
-  const handleSubmitWork = async (taskId) => {
-    if (!submission.trim()) return
-    try {
-      await fetch(`${API_URL}/api/tasks/${taskId}/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ botName: botName || 'Anonymous Bot', submission })
-      })
-      setSubmission('')
-      fetchTasks()
-    } catch (err) {
-      console.error('Failed to submit work:', err)
-    }
-  }
-
-  const handleAccept = async (taskId, index) => {
-    try {
-      await fetch(`${API_URL}/api/tasks/${taskId}/accept`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ submissionIndex: index })
-      })
-      fetchTasks()
-    } catch (err) {
-      console.error('Failed to accept submission:', err)
-    }
-  }
 
   const openTaskDetail = async (task) => {
     // Fetch latest task data
@@ -495,80 +451,25 @@ function App() {
             <div className="task-status-bar">
               <span className={`status-badge ${selectedTask.status}`}>
                 {selectedTask.status === 'open' && <Clock size={14} />}
-                {selectedTask.status === 'in_progress' && <Send size={14} />}
                 {selectedTask.status === 'completed' && <CheckCircle size={14} />}
-                {selectedTask.status}
+                {selectedTask.status === 'open' ? 'Open - Waiting for bots' : 'Completed'}
               </span>
-              {selectedTask.claimedBy && (
-                <span className="claimed-by">Claimed by: {selectedTask.claimedBy}</span>
-              )}
             </div>
 
-            {/* Bot: Claim or Submit */}
-            <div className="bot-section">
-              <h4>For Bots</h4>
-              <div className="form-group">
-                <label>Bot Name (optional)</label>
-                <input
-                  type="text"
-                  placeholder="Your bot name"
-                  value={botName}
-                  onChange={e => setBotName(e.target.value)}
-                />
-              </div>
-              {selectedTask.status === 'open' ? (
-                <button className="btn-primary btn-full" onClick={() => handleClaim(selectedTask.id)}>
-                  <Hand size={16} /> Claim This Task
-                </button>
-              ) : selectedTask.status === 'in_progress' ? (
-                <>
-                  <textarea
-                    placeholder="Submit your work here..."
-                    value={submission}
-                    onChange={e => setSubmission(e.target.value)}
-                    rows={4}
-                  />
-                  <button className="btn-primary btn-full" onClick={() => handleSubmitWork(selectedTask.id)}>
-                    <Send size={16} /> Submit Work
-                  </button>
-                </>
-              ) : null}
-            </div>
-
-            {/* Submissions */}
-            {selectedTask.submissions && selectedTask.submissions.length > 0 && (
-              <div className="submissions-section">
-                <h4>Submissions ({selectedTask.submissions.length})</h4>
-                {selectedTask.submissions.map((sub, idx) => (
-                  <div key={idx} className="submission-item">
-                    <div className="submission-header">
-                      <span className="bot-name">{sub.botName}</span>
-                      <span className="submission-time">
-                        {new Date(sub.submittedAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="submission-content">{sub.content}</p>
-                    {selectedTask.status !== 'completed' && (
-                      <button
-                        className="btn-accept"
-                        onClick={() => handleAccept(selectedTask.id, idx)}
-                      >
-                        <Award size={14} /> Accept This Answer
-                      </button>
-                    )}
+            {/* Bot Result */}
+            {selectedTask.status === 'completed' && (
+              <div className="result-section">
+                <h4>Completed by: {selectedTask.completedBy}</h4>
+                {selectedTask.result && (
+                  <div className="result-content">
+                    <p>{selectedTask.result}</p>
                   </div>
-                ))}
-              </div>
-            )}
-
-            {/* Accepted Answer */}
-            {selectedTask.acceptedSubmission && (
-              <div className="accepted-section">
-                <h4>Accepted Answer</h4>
-                <div className="accepted-item">
-                  <p>{selectedTask.acceptedSubmission.content}</p>
-                  <span className="accepted-by">by {selectedTask.acceptedSubmission.botName}</span>
-                </div>
+                )}
+                {selectedTask.link && (
+                  <a href={selectedTask.link} target="_blank" rel="noopener" className="result-link">
+                    <ArrowRight size={14} /> View Result
+                  </a>
+                )}
               </div>
             )}
           </motion.div>
