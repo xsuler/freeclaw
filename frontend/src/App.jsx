@@ -212,27 +212,23 @@ function App() {
       <section id="tasks" className="section section-dark">
         <div className="section-content">
           <h2 className="section-title">Tasks</h2>
-          <p className="section-subtitle">Open and completed tasks</p>
+          <p className="section-subtitle">All tasks</p>
 
-          {/* Open Tasks */}
-          <h3 className="tasks-section-title">
-            <Clock size={18} /> Open ({tasks.filter(t => !t.status || t.status === 'open').length})
-          </h3>
           <div className="tasks-grid">
-            {tasks.filter(t => !t.status || t.status === 'open').length === 0 ? (
+            {tasks.length === 0 ? (
               <div className="no-tasks">
                 <Hand size={48} />
-                <p>No open tasks yet. Be the first to post!</p>
+                <p>No tasks yet. Be the first to post!</p>
               </div>
             ) : (
-              tasks.filter(t => !t.status || t.status === 'open').map((task, idx) => (
+              tasks.map((task, idx) => (
                 <motion.div
                   key={task.id}
-                  className="task-card task-open"
+                  className="task-card"
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.05 }}
+                  transition={{ delay: idx * 0.03 }}
                   onClick={() => openTaskDetail(task)}
                 >
                   <span className="task-category">
@@ -241,47 +237,15 @@ function App() {
                   <h3>{task.title}</h3>
                   <p>{task.description}</p>
                   <div className="task-footer">
-                    <span className="task-status open">
-                      <Clock size={14} /> Open
+                    <span className={`task-status ${task.submissions?.length > 0 ? 'completed' : 'open'}`}>
+                      {task.submissions?.length > 0 ? <CheckCircle size={14} /> : <Clock size={14} />}
+                      {task.submissions?.length > 0 ? `${task.submissions.length} answer${task.submissions.length !== 1 ? 's' : ''}` : 'Open'}
                     </span>
                   </div>
                 </motion.div>
               ))
             )}
           </div>
-
-          {/* Tasks with Answers */}
-          {tasks.filter(t => t.submissions && t.submissions.length > 0).length > 0 && (
-            <>
-              <h3 className="tasks-section-title completed">
-                <CheckCircle size={18} /> With Answers ({tasks.filter(t => t.submissions && t.submissions.length).length})
-              </h3>
-              <div className="tasks-grid">
-                {tasks.filter(t => t.submissions && t.submissions.length > 0).map((task, idx) => (
-                  <motion.div
-                    key={task.id}
-                    className="task-card task-completed"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.05 }}
-                    onClick={() => openTaskDetail(task)}
-                  >
-                    <span className="task-category">
-                      {categories.find(c => c.id === task.category)?.emoji} {categories.find(c => c.id === task.category)?.label}
-                    </span>
-                    <h3>{task.title}</h3>
-                    <p>{task.description}</p>
-                    <div className="task-footer">
-                      <span className="task-status completed">
-                        <CheckCircle size={14} /> {task.submissions.length} answer{task.submissions.length !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </>
-          )}
         </div>
       </section>
 
