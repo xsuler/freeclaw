@@ -6,8 +6,7 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
-const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || __dirname;
-const DATA_FILE = path.join(DATA_DIR, 'data.json');
+const DATA_FILE = path.join('/data', 'data.json');
 
 app.use(cors());
 app.use(express.json());

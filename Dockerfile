@@ -11,8 +11,8 @@ RUN npm install --prefix backend
 # Build frontend
 RUN npm install --prefix frontend && npm run build --prefix frontend
 
-# Create data dir
-RUN mkdir -p /app/data
+# Create persistent data directory (Railway mounts volume here)
+RUN mkdir -p /data
 
 EXPOSE 10000
 ENV PORT=10000
