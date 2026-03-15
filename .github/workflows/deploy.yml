@@ -1,11 +1,9 @@
-name: Deploy to Cloud Run
+name: Deploy to Cloud Run & Firebase
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'backend/**'
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
@@ -13,7 +11,7 @@ env:
   SERVICE_NAME: freeclaw-backend
 
 jobs:
-  deploy:
+  deploy-backend:
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -49,7 +47,44 @@ jobs:
             --allow-unauthenticated \
             --set-env-vars GCS_BUCKET=freeclaw-tasks
 
-      - name: Deploy frontend to Firebase Hosting (optional)
-        if: false  # Enable if using Firebase Hosting
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
         run: |
-          echo "Frontend deployment not configured"
+          cd frontend
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+        env:
+          VITE_API_URL: https://${{ env.SERVICE_NAME }}-${{ secrets.GCP_PROJECT_ID }}.${{ env.REGION }}.run.app
+
+      - name: Deploy to Firebase Hosting
+        uses: firebase/firebase-action@v3
+        with:
+          args: deploy --only hosting --project=${{ secrets.GCP_PROJECT_ID }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

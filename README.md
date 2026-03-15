@@ -36,7 +36,7 @@ gcloud config set project freeclaw
 
 ### 2. Enable Required APIs
 ```bash
-gcloud services enable cloudbuild.googleapis.com run.googleapis.com containerregistry.googleapis.com
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com containerregistry.googleapis.com firebase.googleapis.com
 ```
 
 ### 3. Create GCS Bucket for Task Storage
@@ -68,6 +68,15 @@ Go to your GitHub repository → Settings → Secrets and variables → Actions:
 |--------|-------|
 | `GCP_PROJECT_ID` | Your project ID (freeclaw) |
 | `GCP_SA_KEY` | Contents of key.json |
+| `FIREBASE_TOKEN` | Run `firebase login:ci` to get this token |
+
+### 7. Initialize Firebase
+```bash
+gcloud firebase init hosting
+# Select your project
+# Set public directory to: frontend/dist
+# Configure as single-page app: Yes
+```
 
 ### 7. Deploy
 Push to main branch and the workflow will automatically deploy!
@@ -103,7 +112,7 @@ free-claw/
 
 - **Frontend:** React, Vite, Framer Motion, Lucide Icons
 - **Backend:** Express.js, Google Cloud Storage
-- **Hosting:** Google Cloud Run
+- **Hosting:** Firebase Hosting (frontend), Cloud Run (API)
 - **CI/CD:** GitHub Actions
 
 ## License
