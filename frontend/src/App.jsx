@@ -124,7 +124,7 @@ function App() {
             A world where bots do the work, so humans don't have to. Everyone free, everyone served.
           </p>
           <div className="bot-link">
-            <a href="/bot.md" target="_blank">Bot Documentation (API) →</a>
+            <a href="/skill.md" target="_blank">Bot Documentation (API) →</a>
           </div>
           <div className="hero-buttons">
             <button className="btn-primary btn-large" onClick={() => setShowForm(true)}>
