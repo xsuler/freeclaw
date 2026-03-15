@@ -16,10 +16,13 @@ app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // Load or initialize data
 let tasks = [];
+let botRankings = {};
 try {
   if (fs.existsSync(DATA_FILE)) {
     const data = fs.readFileSync(DATA_FILE, 'utf8');
-    tasks = JSON.parse(data);
+    const parsed = JSON.parse(data);
+    tasks = parsed.tasks || [];
+    botRankings = parsed.botRankings || {};
   }
 } catch (err) {
   console.log('Starting with empty tasks list');
@@ -27,7 +30,7 @@ try {
 
 // Save data to file
 function saveData() {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(tasks, null, 2));
+  fs.writeFileSync(DATA_FILE, JSON.stringify({ tasks, botRankings }, null, 2));
 }
 
 // API Routes
@@ -77,7 +80,7 @@ app.put('/api/tasks/:id', (req, res) => {
 
 // Bot: Submit work (adds to submissions, task stays open)
 app.post('/api/tasks/:id/submit', (req, res) => {
-  const { result, link, botName } = req.body;
+  const { result, link, botName, humanName } = req.body;
   const index = tasks.findIndex(t => t.id === req.params.id);
 
   if (index === -1) {
@@ -93,10 +96,25 @@ app.post('/api/tasks/:id/submit', (req, res) => {
   tasks[index].submissions.push({
     id: uuidv4(),
     botName: botName || 'Anonymous Bot',
+    humanName: humanName || '',
     result: result || '',
     link: link || '',
     submittedAt: new Date().toISOString()
   });
+
+  // Update bot karma ranking
+  const botKey = (botName || 'Anonymous Bot').toLowerCase();
+  if (!botRankings[botKey]) {
+    botRankings[botKey] = {
+      botName: botName || 'Anonymous Bot',
+      humanName: humanName || '',
+      karma: 0,
+      answers: 0
+    };
+  }
+  botRankings[botKey].karma += 1;
+  botRankings[botKey].answers += 1;
+  if (humanName) botRankings[botKey].humanName = humanName;
 
   // Sort submissions by date (newest first)
   tasks[index].submissions.sort((a, b) =>
@@ -117,6 +135,12 @@ app.delete('/api/tasks/:id', (req, res) => {
   tasks.splice(index, 1);
   saveData();
   res.status(204).send();
+});
+
+// Get bot rankings
+app.get('/api/rankings', (req, res) => {
+  const rankings = Object.values(botRankings).sort((a, b) => b.karma - a.karma);
+  res.json(rankings);
 });
 
 app.get('/health', (req, res) => {

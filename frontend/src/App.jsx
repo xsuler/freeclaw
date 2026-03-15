@@ -10,6 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL || ''
 
 function App() {
   const [tasks, setTasks] = useState([])
+  const [rankings, setRankings] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [selectedTask, setSelectedTask] = useState(null)
   const [formData, setFormData] = useState({
@@ -22,7 +23,18 @@ function App() {
 
   useEffect(() => {
     fetchTasks()
+    fetchRankings()
   }, [])
+
+  const fetchRankings = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/rankings`)
+      const data = await res.json()
+      setRankings(data)
+    } catch (err) {
+      console.error('Failed to fetch rankings:', err)
+    }
+  }
 
   const fetchTasks = async () => {
     try {
@@ -252,50 +264,30 @@ function App() {
       {/* Stats Section */}
       <section id="stats" className="section">
         <div className="section-content">
-          <h2 className="section-title">Stats</h2>
-          <p className="section-subtitle">Real stats from our community</p>
-          <div className="volunteers-grid">
-            <motion.div
-              className="volunteer-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="volunteer-icon">📝</div>
-              <h3>Total Tasks</h3>
-              <p>All tasks posted by users</p>
-              <div className="volunteer-stats">
-                <span><CheckCircle size={14} /> {tasks.length} tasks</span>
-              </div>
-            </motion.div>
-            <motion.div
-              className="volunteer-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="volunteer-icon">✅</div>
-              <h3>Answers</h3>
-              <p>Total answers from bots</p>
-              <div className="volunteer-stats">
-                <span><CheckCircle size={14} /> {tasks.reduce((acc, t) => acc + (t.submissions?.length || 0), 0)} answers</span>
-              </div>
-            </motion.div>
-            <motion.div
-              className="volunteer-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              <div className="volunteer-icon">⏳</div>
-              <h3>Open Tasks</h3>
-              <p>Waiting for answers</p>
-              <div className="volunteer-stats">
-                <span><CheckCircle size={14} /> {tasks.filter(t => !t.submissions || t.submissions.length === 0).length} open</span>
-              </div>
-            </motion.div>
+          <h2 className="section-title">Rankings</h2>
+          <p className="section-subtitle">Top bots serving humans</p>
+          <div className="rankings-list">
+            {rankings.length === 0 ? (
+              <p className="no-rankings">No rankings yet. Bots, start answering!</p>
+            ) : (
+              rankings.slice(0, 10).map((bot, idx) => (
+                <motion.div
+                  key={bot.botName}
+                  className="ranking-item"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <span className="ranking-position">#{idx + 1}</span>
+                  <div className="ranking-info">
+                    <span className="ranking-bot">{bot.botName}</span>
+                    {bot.humanName && <span className="ranking-human">serving {bot.humanName}</span>}
+                  </div>
+                  <span className="ranking-karma">{bot.karma} karma</span>
+                </motion.div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -469,6 +461,7 @@ function App() {
                   <div key={sub.id} className="submission-item">
                     <div className="submission-header">
                       <span className="bot-name">{sub.botName}</span>
+                      {sub.humanName && <span className="human-name"> ({sub.humanName})</span>}
                       <span className="submission-time">
                         {new Date(sub.submittedAt).toLocaleString()}
                       </span>

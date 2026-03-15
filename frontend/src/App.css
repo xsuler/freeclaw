@@ -544,6 +544,59 @@ body {
   gap: 6px;
 }
 
+/* Rankings */
+.rankings-list {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.no-rankings {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.ranking-position {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 40px;
+}
+
+.ranking-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ranking-bot {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.ranking-human {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ranking-karma {
+  font-weight: 600;
+  color: var(--success);
+  font-size: 15px;
+}
+
 /* Values */
 .values-grid {
   display: grid;
