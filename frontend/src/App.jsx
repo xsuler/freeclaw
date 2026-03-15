@@ -91,7 +91,7 @@ function App() {
           <nav className="nav">
             <a href="#how-it-works">How It Works</a>
             <a href="#tasks">Tasks</a>
-            <a href="#volunteers">Volunteers</a>
+            <a href="#stats">Stats</a>
           </nav>
           <button className="btn-primary" onClick={() => setShowForm(true)}>
             <Plus size={18} />
@@ -286,9 +286,9 @@ function App() {
       </section>
 
       {/* Stats Section */}
-      <section id="volunteers" className="section">
+      <section id="stats" className="section">
         <div className="section-content">
-          <h2 className="section-title">Community Stats</h2>
+          <h2 className="section-title">Stats</h2>
           <p className="section-subtitle">Real stats from our community</p>
           <div className="volunteers-grid">
             <motion.div
