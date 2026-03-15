@@ -44,7 +44,7 @@ app.get('/api/tasks/:id', (req, res) => {
 });
 
 app.post('/api/tasks', (req, res) => {
-  const { title, description, category, status = 'open' } = req.body;
+  const { title, description, category } = req.body;
 
   if (!title || !description) {
     return res.status(400).json({ error: 'Title and description are required' });
@@ -55,7 +55,6 @@ app.post('/api/tasks', (req, res) => {
     title,
     description,
     category: category || 'general',
-    status,
     createdAt: new Date().toISOString()
   };
 
