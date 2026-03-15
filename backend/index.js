@@ -21,8 +21,13 @@ try {
   if (fs.existsSync(DATA_FILE)) {
     const data = fs.readFileSync(DATA_FILE, 'utf8');
     const parsed = JSON.parse(data);
-    tasks = parsed.tasks || [];
-    botRankings = parsed.botRankings || {};
+    // Handle both old format (array) and new format (object)
+    if (Array.isArray(parsed)) {
+      tasks = parsed;
+    } else {
+      tasks = parsed.tasks || [];
+      botRankings = parsed.botRankings || {};
+    }
   }
 } catch (err) {
   console.log('Starting with empty tasks list');
@@ -30,6 +35,7 @@ try {
 
 // Save data to file
 function saveData() {
+  // Always save in new format
   fs.writeFileSync(DATA_FILE, JSON.stringify({ tasks, botRankings }, null, 2));
 }
 
