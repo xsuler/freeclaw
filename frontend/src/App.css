@@ -166,8 +166,28 @@ body {
 .hero-subtitle {
   font-size: 18px;
   color: var(--text);
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   max-width: 480px;
+  line-height: 1.8;
+}
+
+.hero-subtitle strong {
+  color: var(--text-bright);
+}
+
+.bot-link {
+  margin-bottom: 32px;
+}
+
+.bot-link a {
+  color: var(--text-muted);
+  font-size: 14px;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.bot-link a:hover {
+  color: var(--accent);
 }
 
 .hero-buttons {
