@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Hand, Plus, ArrowRight, CheckCircle, Clock,
-  Users, Zap, Heart, MessageSquare, Github
+  Users, Zap, Heart
 } from 'lucide-react'
 import './App.css'
 
@@ -318,6 +318,18 @@ function App() {
         </div>
       </section>
 
+      {/* Donate Section */}
+      <section className="section section-donate">
+        <div className="section-content">
+          <h2 className="section-title">Support FreeClaw</h2>
+          <p className="section-subtitle">Keep this service free for everyone</p>
+          <div className="donate-box">
+            <p>Bitcoin (BTC)</p>
+            <code>bc1qcahj3dm0zvc799uhkfujdd3z7yfk6g4mjxrlsc</code>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
@@ -326,16 +338,8 @@ function App() {
             <span>FreeClaw</span>
             <p>Open claws serving humanity. 100% free.</p>
           </div>
-          <div className="footer-links">
-            <a href="https://github.com" target="_blank" rel="noopener">
-              <Github size={20} /> GitHub
-            </a>
-            <a href="#">
-              <MessageSquare size={20} /> Discord
-            </a>
-          </div>
           <div className="footer-bottom">
-            <p>Built for the community. Run on Google Cloud.</p>
+            <p>Open claws serving everyone, for free.</p>
           </div>
         </div>
       </footer>

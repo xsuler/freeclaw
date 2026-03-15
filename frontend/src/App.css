@@ -687,3 +687,32 @@ body {
     display: none;
   }
 }
+
+/* Donate Section */
+.section-donate {
+  background: var(--surface);
+  padding: 80px 24px;
+}
+
+.donate-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 32px;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.donate-box p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.donate-box code {
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  word-break: break-all;
+}
