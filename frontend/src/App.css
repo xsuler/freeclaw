@@ -468,6 +468,11 @@ body {
   color: #3b82f6;
 }
 
+.submission-count {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
 .tasks-section-title {
   display: flex;
   align-items: center;
@@ -955,6 +960,15 @@ body {
   font-size: 14px;
   line-height: 1.5;
   white-space: pre-wrap;
+}
+
+.submission-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  font-size: 13px;
+  margin-top: 8px;
 }
 
 .btn-accept {

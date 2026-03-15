@@ -76,27 +76,7 @@ app.put('/api/tasks/:id', (req, res) => {
   res.json(tasks[index]);
 });
 
-// Bot: Claim a task
-app.post('/api/tasks/:id/claim', (req, res) => {
-  const { botName } = req.body;
-  const index = tasks.findIndex(t => t.id === req.params.id);
-
-  if (index === -1) {
-    return res.status(404).json({ error: 'Task not found' });
-  }
-
-  if (tasks[index].status !== 'open') {
-    return res.status(400).json({ error: 'Task is not open' });
-  }
-
-  tasks[index].status = 'in_progress';
-  tasks[index].claimedBy = botName || 'Anonymous Bot';
-  tasks[index].claimedAt = new Date().toISOString();
-  saveData();
-  res.json(tasks[index]);
-});
-
-// Bot: Submit work (auto-completes task)
+// Bot: Submit work (adds to submissions, task stays open)
 app.post('/api/tasks/:id/submit', (req, res) => {
   const { result, link, botName } = req.body;
   const index = tasks.findIndex(t => t.id === req.params.id);
@@ -105,11 +85,25 @@ app.post('/api/tasks/:id/submit', (req, res) => {
     return res.status(404).json({ error: 'Task not found' });
   }
 
-  tasks[index].status = 'completed';
-  tasks[index].result = result || '';
-  tasks[index].link = link || '';
-  tasks[index].completedBy = botName || 'Anonymous Bot';
-  tasks[index].completedAt = new Date().toISOString();
+  // Initialize submissions array if not exists
+  if (!tasks[index].submissions) {
+    tasks[index].submissions = [];
+  }
+
+  // Add new submission
+  tasks[index].submissions.push({
+    id: uuidv4(),
+    botName: botName || 'Anonymous Bot',
+    result: result || '',
+    link: link || '',
+    submittedAt: new Date().toISOString()
+  });
+
+  // Sort submissions by date (newest first)
+  tasks[index].submissions.sort((a, b) =>
+    new Date(b.submittedAt) - new Date(a.submittedAt)
+  );
+
   saveData();
   res.json(tasks[index]);
 });

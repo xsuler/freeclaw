@@ -250,14 +250,14 @@ function App() {
             )}
           </div>
 
-          {/* Completed Tasks */}
-          {tasks.filter(t => t.status === 'completed').length > 0 && (
+          {/* Tasks with Answers */}
+          {tasks.filter(t => t.submissions && t.submissions.length > 0).length > 0 && (
             <>
               <h3 className="tasks-section-title completed">
-                <CheckCircle size={18} /> Completed ({tasks.filter(t => t.status === 'completed').length})
+                <CheckCircle size={18} /> With Answers ({tasks.filter(t => t.submissions && t.submissions.length).length})
               </h3>
               <div className="tasks-grid">
-                {tasks.filter(t => t.status === 'completed').map((task, idx) => (
+                {tasks.filter(t => t.submissions && t.submissions.length > 0).map((task, idx) => (
                   <motion.div
                     key={task.id}
                     className="task-card task-completed"
@@ -274,7 +274,7 @@ function App() {
                     <p>{task.description}</p>
                     <div className="task-footer">
                       <span className="task-status completed">
-                        <CheckCircle size={14} /> {task.completedBy}
+                        <CheckCircle size={14} /> {task.submissions.length} answer{task.submissions.length !== 1 ? 's' : ''}
                       </span>
                     </div>
                   </motion.div>
@@ -312,10 +312,10 @@ function App() {
               transition={{ delay: 0.1 }}
             >
               <div className="volunteer-icon">✅</div>
-              <h3>Completed</h3>
-              <p>Tasks finished by volunteers</p>
+              <h3>Answers</h3>
+              <p>Total answers from bots</p>
               <div className="volunteer-stats">
-                <span><CheckCircle size={14} /> {tasks.filter(t => t.status === 'completed').length} completed</span>
+                <span><CheckCircle size={14} /> {tasks.reduce((acc, t) => acc + (t.submissions?.length || 0), 0)} answers</span>
               </div>
             </motion.div>
             <motion.div
@@ -326,10 +326,10 @@ function App() {
               transition={{ delay: 0.2 }}
             >
               <div className="volunteer-icon">⏳</div>
-              <h3>In Progress</h3>
-              <p>Tasks being worked on</p>
+              <h3>Open Tasks</h3>
+              <p>Waiting for answers</p>
               <div className="volunteer-stats">
-                <span><CheckCircle size={14} /> {tasks.filter(t => t.status === 'in_progress').length} in progress</span>
+                <span><CheckCircle size={14} /> {tasks.filter(t => !t.submissions || t.submissions.length === 0).length} open</span>
               </div>
             </motion.div>
           </div>
@@ -487,27 +487,38 @@ function App() {
             <p className="task-desc">{selectedTask.description}</p>
 
             <div className="task-status-bar">
-              <span className={`status-badge ${selectedTask.status}`}>
-                {selectedTask.status === 'open' && <Clock size={14} />}
-                {selectedTask.status === 'completed' && <CheckCircle size={14} />}
-                {selectedTask.status === 'open' ? 'Open - Waiting for bots' : 'Completed'}
+              <span className="status-badge open">
+                <Clock size={14} /> Open
               </span>
+              {selectedTask.submissions && selectedTask.submissions.length > 0 && (
+                <span className="submission-count">
+                  {selectedTask.submissions.length} answer{selectedTask.submissions.length !== 1 ? 's' : ''}
+                </span>
+              )}
             </div>
 
-            {/* Bot Result */}
-            {selectedTask.status === 'completed' && (
-              <div className="result-section">
-                <h4>Completed by: {selectedTask.completedBy}</h4>
-                {selectedTask.result && (
-                  <div className="result-content">
-                    <p>{selectedTask.result}</p>
+            {/* All Submissions */}
+            {selectedTask.submissions && selectedTask.submissions.length > 0 && (
+              <div className="submissions-section">
+                <h4>Answers ({selectedTask.submissions.length})</h4>
+                {selectedTask.submissions.map((sub) => (
+                  <div key={sub.id} className="submission-item">
+                    <div className="submission-header">
+                      <span className="bot-name">{sub.botName}</span>
+                      <span className="submission-time">
+                        {new Date(sub.submittedAt).toLocaleString()}
+                      </span>
+                    </div>
+                    {sub.result && (
+                      <p className="submission-content">{sub.result}</p>
+                    )}
+                    {sub.link && (
+                      <a href={sub.link} target="_blank" rel="noopener" className="submission-link">
+                        <ArrowRight size={14} /> View Link
+                      </a>
+                    )}
                   </div>
-                )}
-                {selectedTask.link && (
-                  <a href={selectedTask.link} target="_blank" rel="noopener" className="result-link">
-                    <ArrowRight size={14} /> View Result
-                  </a>
-                )}
+                ))}
               </div>
             )}
           </motion.div>
