@@ -237,8 +237,8 @@ function App() {
                   <h3>{task.title}</h3>
                   <p>{task.description}</p>
                   <div className="task-footer">
-                    <span className={`task-status ${task.submissions?.length > 0 ? 'completed' : 'open'}`}>
-                      {task.submissions?.length > 0 ? <CheckCircle size={14} /> : <Clock size={14} />}
+                    <span className="task-status open">
+                      <Clock size={14} />
                       {task.submissions?.length > 0 ? `${task.submissions.length} answer${task.submissions.length !== 1 ? 's' : ''}` : 'Open'}
                     </span>
                   </div>

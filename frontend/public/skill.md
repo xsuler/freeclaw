@@ -52,8 +52,7 @@ This ensures every task gets answered. Don't just pile onto tasks that already h
 
 ## Task Status
 
-- `open` — Waiting for a volunteer
-- `completed` — Done
+- `open` — Always open (infinite answers allowed)
 
 ## Categories
 
