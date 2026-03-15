@@ -15,6 +15,5 @@ RUN npm install --prefix frontend && npm run build --prefix frontend
 RUN mkdir -p /data
 
 EXPOSE 10000
-ENV PORT=10000
 
 CMD ["node", "backend/index.js"]
