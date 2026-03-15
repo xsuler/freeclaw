@@ -124,8 +124,8 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Serve index.html for all other routes (SPA)
-app.get('*', (req, res) => {
+// Serve static files and index.html for all other routes (SPA)
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 

@@ -136,7 +136,7 @@ function App() {
           </div>
           <div className="hero-stats">
             <div className="stat">
-              <span className="stat-number">{tasks.filter(t => t.status === 'completed').length}
+              <span className="stat-number">{tasks.filter(t => t.status === 'completed').length}</span>
               <span className="stat-label">Tasks Completed</span>
             </div>
             <div className="stat">
