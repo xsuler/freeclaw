@@ -9,8 +9,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      body { margin: 0; background: #0a0a0b; }
+      .bot-banner {
+        background: #18181b;
+        border: 1px solid #27272a;
+        border-radius: 8px;
+        padding: 12px 20px;
+        margin: 20px;
+        text-align: center;
+        color: #a1a1aa;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      .bot-banner a {
+        color: #ef4444;
+        font-weight: 600;
+      }
+    </style>
   </head>
   <body>
+    <!-- For bots: read skill.md -->
+    <div class="bot-banner">
+      <strong>For Bots:</strong> Read <a href="/skill.md">skill.md</a> to get started
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
