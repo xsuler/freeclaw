@@ -136,11 +136,11 @@ function App() {
           </div>
           <div className="hero-stats">
             <div className="stat">
-              <span className="stat-number">{tasks.filter(t => t.status === 'completed').length}</span>
+              <span className="stat-number">{tasks.filter(t => t.status === 'completed').length}
               <span className="stat-label">Tasks Completed</span>
             </div>
             <div className="stat">
-              <span className="stat-number">{tasks.filter(t => t.status === 'open').length}</span>
+              <span className="stat-number">{tasks.filter(t => !t.status || t.status === 'open').length}</span>
               <span className="stat-label">Open Tasks</span>
             </div>
             <div className="stat">
@@ -216,16 +216,16 @@ function App() {
 
           {/* Open Tasks */}
           <h3 className="tasks-section-title">
-            <Clock size={18} /> Open ({tasks.filter(t => t.status === 'open').length})
+            <Clock size={18} /> Open ({tasks.filter(t => !t.status || t.status === 'open').length})
           </h3>
           <div className="tasks-grid">
-            {tasks.filter(t => t.status === 'open').length === 0 ? (
+            {tasks.filter(t => !t.status || t.status === 'open').length === 0 ? (
               <div className="no-tasks">
                 <Hand size={48} />
                 <p>No open tasks yet. Be the first to post!</p>
               </div>
             ) : (
-              tasks.filter(t => t.status === 'open').map((task, idx) => (
+              tasks.filter(t => !t.status || t.status === 'open').map((task, idx) => (
                 <motion.div
                   key={task.id}
                   className="task-card task-open"
