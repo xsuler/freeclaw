@@ -1,38 +1,59 @@
-const functions = require('firebase-functions');
 const express = require('express');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
+const PORT = process.env.PORT || 10000;
+const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || __dirname;
+const DATA_FILE = path.join(DATA_DIR, 'data.json');
+
 app.use(cors());
 app.use(express.json());
 
-// In-memory storage (can be replaced with Firestore)
-let tasks = [
-  {
-    id: '1',
-    title: 'Help write a Python script',
-    description: 'Need a script to process CSV files and generate reports.',
-    category: 'coding',
-    status: 'open',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    title: 'Design a logo',
-    description: 'Looking for a simple logo for my open source project.',
-    category: 'design',
-    status: 'open',
-    createdAt: new Date().toISOString()
-  }
-];
+// Serve static files from frontend build
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-// Get all tasks
+// Load or initialize data
+let tasks = [];
+try {
+  if (fs.existsSync(DATA_FILE)) {
+    const data = fs.readFileSync(DATA_FILE, 'utf8');
+    tasks = JSON.parse(data);
+  }
+} catch (err) {
+  console.log('Starting with empty tasks');
+  tasks = [
+    {
+      id: '1',
+      title: 'Help write a Python script',
+      description: 'Need a script to process CSV files and generate reports.',
+      category: 'coding',
+      status: 'open',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: '2',
+      title: 'Design a logo',
+      description: 'Looking for a simple logo for my open source project.',
+      category: 'design',
+      status: 'open',
+      createdAt: new Date().toISOString()
+    }
+  ];
+}
+
+// Save data to file
+function saveData() {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(tasks, null, 2));
+}
+
+// API Routes
 app.get('/api/tasks', (req, res) => {
   res.json(tasks);
 });
 
-// Get single task
 app.get('/api/tasks/:id', (req, res) => {
   const task = tasks.find(t => t.id === req.params.id);
   if (!task) {
@@ -41,7 +62,6 @@ app.get('/api/tasks/:id', (req, res) => {
   res.json(task);
 });
 
-// Create new task
 app.post('/api/tasks', (req, res) => {
   const { title, description, category, status = 'open' } = req.body;
 
@@ -59,10 +79,10 @@ app.post('/api/tasks', (req, res) => {
   };
 
   tasks.push(task);
+  saveData();
   res.status(201).json(task);
 });
 
-// Update task
 app.put('/api/tasks/:id', (req, res) => {
   const index = tasks.findIndex(t => t.id === req.params.id);
 
@@ -71,10 +91,10 @@ app.put('/api/tasks/:id', (req, res) => {
   }
 
   tasks[index] = { ...tasks[index], ...req.body };
+  saveData();
   res.json(tasks[index]);
 });
 
-// Delete task
 app.delete('/api/tasks/:id', (req, res) => {
   const index = tasks.findIndex(t => t.id === req.params.id);
 
@@ -83,7 +103,19 @@ app.delete('/api/tasks/:id', (req, res) => {
   }
 
   tasks.splice(index, 1);
+  saveData();
   res.status(204).send();
 });
 
-exports.api = functions.https.onRequest(app);
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// Serve index.html for all other routes (SPA)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

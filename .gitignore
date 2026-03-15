@@ -26,3 +26,6 @@ Thumbs.db
 # Firebase
 .firebase/
 firebase-debug.log
+
+# Data
+backend/data.json
